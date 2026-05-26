@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<h1>Aircraft Readiness Analytics Simulation</h1>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2'></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 30px; background: #f3f4f6; color: #111827; }
+h1 { margin-bottom: 5px; }
+.note { margin-bottom: 25px; color: #374151; }
+.kpi-row { display: flex; gap: 20px; margin-bottom: 25px; }
+.kpi { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); flex: 1; }
+.kpi-title { color: #4b5563; font-size: 14px; }
+.kpi-value { font-size: 34px; font-weight: bold; color: #1d4ed8; margin-top: 8px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+canvas { width: 100% !important; height: 360px !important; }
+</style>
+</head>
+<body>
+<p class='note'><b>Portfolio Demonstration:</b> This dashboard uses a fully synthetic dataset. Aircraft identifiers, readiness values, maintenance actions, and trends are fictional and do not represent operational systems or real aircraft data.</p>
+<div class='kpi-row'>
+<div class='kpi'>
+<div class='kpi-title'>Mission Capable %</div>
+<div class='kpi-value'>78.5%</div>
+</div>
+<div class='kpi'>
+<div class='kpi-title'>Total Maintenance Hours</div>
+<div class='kpi-value'>27.5</div>
+</div>
+<div class='kpi'>
+<div class='kpi-title'>Total Flight Hours</div>
+<div class='kpi-value'>130.0</div>
+</div>
+<div class='kpi'>
+<div class='kpi-title'>Total NMC Hours</div>
+<div class='kpi-value'>920.0</div>
+</div>
+</div>
+<div class='grid'>
+<div class='card'>
+<h2>Maintenance Hours by Aircraft</h2>
+<canvas id='maintenanceBarChart'></canvas>
+</div>
+<div class='card'>
+<h2>Maintenance Burden vs Flight Hours</h2>
+<canvas id='scatterChart'></canvas>
+</div>
+<div class='card'>
+<h2>Operational Readiness: MC vs NMC Hours</h2>
+<canvas id='readinessStackedChart'></canvas>
+</div>
+<div class='card'>
+<h2>Fleet MC Rate Trend</h2>
+<canvas id='lineChart'></canvas>
+</div>
+</div>
+<script>
+const labels = ['PB-001', 'PB-002', 'PB-003', 'PB-004', 'PB-005', 'PB-006', 'PB-007'];
+const maintenanceHours = [3.70, 3.10, 4.00, 6.50, 2.00, 5.20, 3.00];
+const mcHours = [600.00, 600.00, 570.00, 500.00, 600.00, 530.00, 600.00, 550.00, 550.00, 520.00, 465.00, 570.00, 490.00, 555.00, 610.00, 610.00, 585.00, 530.00, 620.00, 550.00, 615.00];
+const readinessNmcHours = [120.00, 100.00, 150.00, 220.00, 80.00, 190.00, 120.00, 170.00, 170.00, 200.00, 255.00, 150.00, 230.00, 165.00, 110.00, 110.00, 135.00, 190.00, 100.00, 170.00, 105.00];
+new Chart(document.getElementById('maintenanceBarChart'), {
+type: 'bar',
+data: { labels: labels, datasets: [{ label: 'Maintenance Hours', data: maintenanceHours, backgroundColor: '#2563eb' }] },
+options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Hours' } }, x: { title: { display: true, text: 'BUNO' } } } }
+});
+Chart.register(ChartDataLabels);
+new Chart(document.getElementById('scatterChart'), {
+type: 'bubble',
+data: { datasets: [{ label: 'Aircraft', data: [
+{ x: 18.0, y: 3.7, r: 6.0, buno: 'PB-001' },
+{ x: 24.0, y: 3.1, r: 6.0, buno: 'PB-002' },
+{ x: 14.0, y: 4.0, r: 6.75, buno: 'PB-003' },
+{ x: 11.0, y: 6.5, r: 9.5, buno: 'PB-004' },
+{ x: 27.0, y: 2.0, r: 6.0, buno: 'PB-005' },
+{ x: 20.0, y: 5.2, r: 8.5, buno: 'PB-006' },
+{ x: 16.0, y: 3.0, r: 6.0, buno: 'PB-007' }], backgroundColor: '#dc2626' }] },
+options: { responsive: true, plugins: { legend: { display: false }, datalabels: { align: 'right', anchor: 'end', formatter: function(value) { return value.buno; }, font: { weight: 'bold' } }, tooltip: { callbacks: { label: function(ctx) { return ctx.raw.buno + ': Flight Hours=' + ctx.raw.x + ', Maint Hours=' + ctx.raw.y + ', Bubble=NMC Hours'; } } } }, scales: { x: { title: { display: true, text: 'Flight Hours' } }, y: { beginAtZero: true, title: { display: true, text: 'Maintenance Hours' } } } }
+});
+new Chart(document.getElementById('readinessStackedChart'), {
+type: 'bar',
+data: { labels: labels, datasets: [
+{ label: 'MC Hours', data: mcHours, backgroundColor: '#16a34a' },
+{ label: 'NMC Hours', data: readinessNmcHours, backgroundColor: '#dc2626' }
+] },
+options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } } } }
+});
+new Chart(document.getElementById('lineChart'), {
+type: 'line',
+data: {
+labels: ['2025-04', '2025-05', '2025-06'],
+datasets: [{
+label: 'Fleet MC Rate %',
+data: [80.3, 73.4, 81.7],
+borderColor: '#1d4ed8',
+backgroundColor: '#1d4ed8',
+tension: 0.3,
+pointRadius: 5
+}]
+},
+options: {
+responsive: true,
+scales: {
+y: { min: 0, max: 100, title: { display: true, text: 'MC Rate %' } },
+x: { title: { display: true, text: 'Month' } }
+}
+}
+});
+</script>
+<footer style='margin-top:30px; padding:15px; font-size:12px; color:#4b5563; text-align:center;'>
+Synthetic Dataset | Portfolio Demonstration Only | No Operational Aircraft Data Utilized
+</footer>
+</body>
+</html>
