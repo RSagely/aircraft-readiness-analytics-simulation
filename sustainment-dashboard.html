@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aircraft Sustainment Analytics Simulation</title>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 30px; background: #f3f4f6; color: #111827; }
+h1 { margin-bottom: 5px; }
+.note { color: #4b5563; margin-bottom: 25px; }
+.kpi-row { display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; }
+.kpi { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); flex: 1; min-width: 180px; }
+.kpi-title { color: #4b5563; font-size: 14px; }
+.kpi-value { font-size: 32px; font-weight: bold; color: #1d4ed8; margin-top: 8px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+canvas { width: 100% !important; height: 340px !important; }
+footer { margin-top: 30px; padding: 15px; font-size: 12px; color: #4b5563; text-align: center; }
+</style>
+</head>
+<body>
+<h1>Aircraft Sustainment Analytics Simulation</h1>
+<p class='note'><b>Portfolio Demonstration:</b> Fully synthetic sustainment dataset. No operational aircraft data used.</p>
+<div class='kpi-row'>
+<div class='kpi'><div class='kpi-title'>Open Events</div><div class='kpi-value'>4</div></div>
+<div class='kpi'><div class='kpi-title'>Overdue Events</div><div class='kpi-value'>1</div></div>
+<div class='kpi'><div class='kpi-title'>Replacement Removals</div><div class='kpi-value'>1</div></div>
+<div class='kpi'><div class='kpi-title'>Overdue Directives</div><div class='kpi-value'>1</div></div>
+</div>
+<div class='grid'>
+<div class='card'><h2>Labor Hours by Aircraft</h2><canvas id='laborChart'></canvas></div>
+<div class='card'><h2>Fuel Cost by Aircraft</h2><canvas id='fuelCostChart'></canvas></div>
+<div class='card'><h2>Fuel Burn Rate by Aircraft</h2><canvas id='burnRateChart'></canvas></div>
+<div class='card'><h2>Maintenance Event Status</h2><canvas id='eventStatusChart'></canvas></div>
+</div>
+<footer>Synthetic Dataset | Portfolio Demonstration Only | No Operational Aircraft Data Utilized</footer>
+<script>
+const laborLabels = ['PB-001', 'PB-004', 'PB-006', 'PB-002'];
+const laborValues = [0.00, 6.80, 3.50, 2.10];
+const fuelLabels = ['PB-001', 'PB-002', 'PB-003', 'PB-004', 'PB-005', 'PB-006', 'PB-007'];
+const fuelValues = [3783.00, 4704.50, 3152.50, 2085.50, 5238.00, 4462.00, 3589.00];
+const burnLabels = ['PB-001', 'PB-002', 'PB-003', 'PB-004', 'PB-005', 'PB-006', 'PB-007'];
+const burnValues = [371.43, 359.26, 361.11, 390.91, 360.00, 383.33, 370.00];
+new Chart(document.getElementById('laborChart'), {
+type: 'bar',
+data: { labels: laborLabels, datasets: [{ label: 'Labor Hours', data: laborValues, backgroundColor: '#2563eb' }] },
+options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Hours' } }, x: { title: { display: true, text: 'Aircraft' } } } }
+});
+new Chart(document.getElementById('fuelCostChart'), {
+type: 'bar',
+data: { labels: fuelLabels, datasets: [{ label: 'Fuel Cost', data: fuelValues, backgroundColor: '#16a34a' }] },
+options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Cost ($)' } }, x: { title: { display: true, text: 'Aircraft' } } } }
+});
+new Chart(document.getElementById('burnRateChart'), {
+type: 'line',
+data: { labels: burnLabels, datasets: [{ label: 'Fuel Burn Rate (gal/hr)', data: burnValues, borderColor: '#dc2626', backgroundColor: '#dc2626', tension: 0.3, pointRadius: 5 }] },
+options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'Gallons / Hour' } }, x: { title: { display: true, text: 'Aircraft' } } } }
+});
+new Chart(document.getElementById('eventStatusChart'), {
+type: 'doughnut',
+data: { labels: ['Open', 'Overdue'], datasets: [{ data: [4, 1], backgroundColor: ['#2563eb', '#dc2626'] }] },
+options: { responsive: true }
+});
+</script>
+</body>
+</html>
